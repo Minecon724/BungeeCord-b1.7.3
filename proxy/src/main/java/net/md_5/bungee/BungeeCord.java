@@ -19,12 +19,10 @@ import net.md_5.bungee.config.Configuration;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.Inet6Address;
 import java.net.InetSocketAddress;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -41,8 +39,6 @@ import jline.console.ConsoleReader;
 import jline.internal.Log;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Synchronized;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ReconnectHandler;
@@ -58,7 +54,6 @@ import net.md_5.bungee.log.LoggingOutputStream;
 import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.Packet3Chat;
-import net.md_5.bungee.protocol.packet.PacketF9BungeeMessage;
 import net.md_5.bungee.protocol.Vanilla;
 import net.md_5.bungee.query.RemoteQuery;
 import net.md_5.bungee.util.CaseInsensitiveMap;
@@ -221,6 +216,7 @@ public class BungeeCord extends ProxyServer
                     }
                 }
             };
+
             new ServerBootstrap()
                     .channel( NioServerSocketChannel.class )
                     .childAttr( PipelineUtils.LISTENER, info )
@@ -247,6 +243,10 @@ public class BungeeCord extends ProxyServer
                     }
                 };
                 new RemoteQuery( this, info ).start( new InetSocketAddress( info.getHost().getAddress(), info.getQueryPort() ), eventLoops, bindListener );
+            }
+
+            if (info.getHost().getAddress() instanceof Inet6Address && config.isIpForwarding()) {
+                getLogger().warning("IP forwarding is currently not supported for IPv6 clients");
             }
         }
     }
