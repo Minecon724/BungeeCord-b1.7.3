@@ -119,7 +119,7 @@ public class ServerConnector extends PacketHandler
             
             if ( user.getServer() != null )
             {
-                user.sendDimensionSwitch();
+                user.sendDimensionSwitch(login.getDimension());
                 
                 // Remove from old servers
                 user.getServer().setObsolete( true );

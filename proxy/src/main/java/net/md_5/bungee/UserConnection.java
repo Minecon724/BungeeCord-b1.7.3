@@ -30,10 +30,7 @@ import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.PacketWrapper;
 import net.md_5.bungee.netty.PipelineUtils;
-import net.md_5.bungee.protocol.packet.DefinedPacket;
-import net.md_5.bungee.protocol.packet.Packet3Chat;
-import net.md_5.bungee.protocol.packet.PacketF9BungeeMessage;
-import net.md_5.bungee.protocol.packet.PacketFFKick;
+import net.md_5.bungee.protocol.packet.*;
 import net.md_5.bungee.util.CaseInsensitiveSet;
 
 @RequiredArgsConstructor
@@ -140,15 +137,15 @@ public final class UserConnection implements ProxiedPlayer
         connect( target, false );
     }
 
-    void sendDimensionSwitch()
+    void sendDimensionSwitch(int targetDimension)
     {
-        unsafe().sendPacket( PacketConstants.DIM1_SWITCH );
-        unsafe().sendPacket( PacketConstants.DIM2_SWITCH );
+        unsafe().sendPacket( new Packet9Respawn((byte) targetDimension == -1 ? 1 : -1));
+        unsafe().sendPacket( new Packet9Respawn((byte) targetDimension));
     }
 
     public void connectNow(ServerInfo target)
     {
-        sendDimensionSwitch();
+        sendDimensionSwitch(-1);
         connect( target );
     }
 
