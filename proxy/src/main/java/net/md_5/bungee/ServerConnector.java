@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import java.util.Objects;
 import java.util.Queue;
+
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -11,6 +12,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
+import net.md_5.bungee.connection.BungeeMessageHandler;
 import net.md_5.bungee.connection.CancelSendSignal;
 import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.netty.HandlerBoss;
@@ -33,6 +35,9 @@ public class ServerConnector extends PacketHandler
     private final BungeeServerInfo target;
     private State thisState = State.LOGIN;
     private boolean sentMessages;
+
+    private ServerConnection server;
+    private BungeeMessageHandler bungeeMessageHandler;
 
     private enum State
     {
@@ -57,6 +62,15 @@ public class ServerConnector extends PacketHandler
     public void connected(ChannelWrapper channel) throws Exception
     {
         this.ch = channel;
+
+        this.server = new ServerConnection(ch, target);
+        this.bungeeMessageHandler = new BungeeMessageHandler(server, user);
+
+        if (user.getHandshakingServer() != null) {
+            user.getHandshakingServer().setObsolete(true);
+            user.getHandshakingServer().disconnect("Quitting");
+        }
+        user.setHandshakingServer( server );
 
         // TODO: Figure out if this is needed or not
         /*ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -85,7 +99,6 @@ public class ServerConnector extends PacketHandler
     {
         Preconditions.checkState( thisState == State.LOGIN, "Not exepcting LOGIN" );
 
-        ServerConnection server = new ServerConnection( ch, target );
         ServerConnectedEvent event = new ServerConnectedEvent( user, server );
         bungee.getPluginManager().callEvent( event );
 
@@ -133,6 +146,7 @@ public class ServerConnector extends PacketHandler
             user.getPendingConnects().remove( target );
 
             user.setServer( server );
+            user.setHandshakingServer( null );
             ch.getHandle().pipeline().get( HandlerBoss.class ).setHandler( new DownstreamBridge( bungee, user, server ) );
         }
 
@@ -146,6 +160,10 @@ public class ServerConnector extends PacketHandler
     @Override
     public void handle(PacketFFKick kick) throws Exception
     {
+        if (user.getHandshakingServer() != null && user.getHandshakingServer() != user.getServer()) {
+            return;
+        }
+
         ServerInfo def = bungee.getServerInfo( user.getPendingConnection().getListener().getFallbackServer() );
         if ( Objects.equals( target, def ) )
         {
@@ -171,6 +189,9 @@ public class ServerConnector extends PacketHandler
     @Override
     public void handle(PacketF9BungeeMessage bungeeMessage) throws Exception
     {
+        bungeeMessageHandler.handleBungeeMessage( bungeeMessage );
+
+        throw new CancelSendSignal();
     }
 
     @Override

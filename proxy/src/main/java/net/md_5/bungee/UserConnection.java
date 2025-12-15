@@ -50,6 +50,9 @@ public final class UserConnection implements ProxiedPlayer
     /*========================================================================*/
     @Getter
     @Setter
+    private ServerConnection handshakingServer;
+    @Getter
+    @Setter
     private ServerConnection server;
     @Getter
     private final Object switchMutex = new Object();
