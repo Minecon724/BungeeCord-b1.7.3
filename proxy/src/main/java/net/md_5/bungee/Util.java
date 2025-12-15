@@ -1,7 +1,12 @@
 package net.md_5.bungee;
 
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
+
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.Collection;
+import java.net.URI;
 
 /**
  * Series of utility classes to perform various operations.
@@ -19,13 +24,15 @@ public class Util
      */
     public static InetSocketAddress getAddr(String hostline)
     {
-        String[] split = hostline.split( ":" );
-        int port = DEFAULT_PORT;
-        if ( split.length > 1 )
-        {
-            port = Integer.parseInt( split[1] );
+        URI uri = URI.create("tcp://" + hostline);
+
+        String host = uri.getHost();
+        int port = uri.getPort();
+        if (port == -1) {
+            port = DEFAULT_PORT;
         }
-        return new InetSocketAddress( split[0], port );
+
+        return new InetSocketAddress( host, port );
     }
 
     /**
@@ -70,27 +77,14 @@ public class Util
 
         return ( ret.length() == 0 ) ? "" : ret.substring( 0, ret.length() - separators.length() );
     }
-	
-	/**
-     * Serializes address string to long
-     *
-     * @param address Remote client address
-     * @return serialized address as long
-     */
-    public static long serializeAddress(String address)
-    {
-        String[] ipAddressInArray = address.split("\\.");
 
-        long result = 0;
-
-        // https://mkyong.com/java/java-convert-ip-address-to-decimal-number/
-        for (int i = 0; i < ipAddressInArray.length; i++)
-        {
-            int power = 3 - i;
-            int ip = Integer.parseInt(ipAddressInArray[i]);
-
-            result += ip * Math.pow(256, power);
+    public static long addressToLoginPacketValue(InetAddress address) {
+        if (address instanceof Inet6Address) {
+            // returns a /64
+            return Longs.fromByteArray(address.getAddress());
+        } else {
+            byte[] hostBytes = address.getAddress();
+            return Ints.fromByteArray(hostBytes) & 0xFFFFFFFFL; // remove sign extension
         }
-        return result;
     }
 }

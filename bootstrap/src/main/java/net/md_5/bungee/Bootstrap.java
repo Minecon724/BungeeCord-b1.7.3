@@ -1,10 +1,7 @@
 package net.md_5.bungee;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import net.md_5.bungee.api.ChatColor;
@@ -59,8 +56,6 @@ public class Bootstrap
                 Thread.sleep( TimeUnit.SECONDS.toMillis( 30 ) );
             }
         }*/
-
-        System.setProperty( "java.net.preferIPv4Stack", "true" );
 
         BungeeCord bungee = new BungeeCord();
         ProxyServer.setInstance( bungee );

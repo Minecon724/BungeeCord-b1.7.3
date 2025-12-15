@@ -1,10 +1,7 @@
 package net.md_5.bungee;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import java.io.DataInput;
-import java.security.PublicKey;
+
 import java.util.Objects;
 import java.util.Queue;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +15,9 @@ import net.md_5.bungee.connection.CancelSendSignal;
 import net.md_5.bungee.connection.DownstreamBridge;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.ChannelWrapper;
-import net.md_5.bungee.netty.PacketDecoder;
 import net.md_5.bungee.netty.PacketHandler;
-import net.md_5.bungee.netty.PipelineUtils;
-import net.md_5.bungee.protocol.MinecraftOutput;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.Packet1Login;
-import net.md_5.bungee.protocol.packet.Packet9Respawn;
 import net.md_5.bungee.protocol.packet.PacketF9BungeeMessage;
 import net.md_5.bungee.protocol.packet.PacketFFKick;
 import net.md_5.bungee.protocol.Vanilla;
@@ -74,11 +67,10 @@ public class ServerConnector extends PacketHandler
 
         channel.write( user.getPendingConnection().getHandshake() );
 
-        // IP Forwarding
-        boolean flag = BungeeCord.getInstance().config.isIpForwarding();
-        long address = flag ? Util.serializeAddress(user.getAddress().getAddress().getHostAddress()) : 0;
-        byte header = (byte) (flag ? MAGIC_HEADER : 0);
-        // end
+        boolean ipForwardingEnabled = BungeeCord.getInstance().config.isIpForwarding();
+        long address = ipForwardingEnabled ? Util.addressToLoginPacketValue(user.getAddress().getAddress()) : 0;
+        byte header = (byte) (ipForwardingEnabled ? MAGIC_HEADER : 0);
+
         channel.write(new Packet1Login(Vanilla.PROTOCOL_VERSION, user.getPendingConnection().getHandshake().getUsername(), address, header));
     }
 
