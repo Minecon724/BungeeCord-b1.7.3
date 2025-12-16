@@ -54,7 +54,8 @@ public class Vanilla implements Protocol
     {
         int start = buf.readerIndex();
         DefinedPacket packet = read( packetId, buf, this );
-        if ( buf.readerIndex() == start )
+        // For keepalive, there's no data to read
+        if ( packetId != 0x00 && buf.readerIndex() == start )
         {
             throw new BadPacketException( "Unknown packet id " + packetId );
         }
