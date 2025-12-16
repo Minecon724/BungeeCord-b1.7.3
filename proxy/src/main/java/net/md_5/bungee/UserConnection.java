@@ -234,7 +234,7 @@ public final class UserConnection implements ProxiedPlayer
         if ( ch.getHandle().isActive() )
         {
             bungee.getLogger().log( Level.INFO, "[" + getName() + "] disconnected with: " + reason );
-            unsafe().sendPacket( new PacketFFKick( reason ) );
+            unsafe().sendPacket( new PacketFFKick( reason.substring(0, Math.min( 100, reason.length() ) ) ) );
             ch.close();
             if ( server != null )
             {
