@@ -37,10 +37,7 @@ public class Configuration
      * Set of all servers.
      */
     private TMap<String, ServerInfo> servers;
-    /**
-     * Should we check minecraft.net auth.
-     */
-    private boolean onlineMode = false;
+
 	private boolean ipForwarding = true;
     private int playerLimit = -1;
     private Collection<String> disabledCommands;
@@ -55,7 +52,6 @@ public class Configuration
         timeout = adapter.getInt( "timeout", timeout );
         //uuid = adapter.getString( "stats", uuid );
 		ipForwarding = adapter.getBoolean( "ip_forwarding", ipForwarding );
-        onlineMode = adapter.getBoolean( "online_mode", onlineMode );
         playerLimit = adapter.getInt( "player_limit", playerLimit );
         throttle = adapter.getInt( "connection_throttle", throttle );
 

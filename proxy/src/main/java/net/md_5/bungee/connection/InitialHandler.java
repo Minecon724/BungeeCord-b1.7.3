@@ -54,10 +54,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
             ch.write( packet );
         }
     };
-    @Getter
-    private boolean onlineMode = BungeeCord.getInstance().config.isOnlineMode();
     private InetSocketAddress vHost;
-    private String serverId;
 
     private enum State
     {
@@ -94,40 +91,8 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         {
             disconnect( bungee.getTranslation( "outdated_client" ) );
         }
-		
-		if ( this.onlineMode )
-        {
-            String encName = URLEncoder.encode( InitialHandler.this.getName(), "UTF-8" );
-            String encodedHash = URLEncoder.encode( InitialHandler.this.serverId, "UTF-8" );
-            String authURL = "http://session.minecraft.net/game/checkserver.jsp?user=" + encName + "&serverId=" + encodedHash;
 
-            Callback<String> handler = new Callback<String>()
-            {
-                @Override
-                public void done(String result, Throwable error)
-                {
-                    if ( error == null )
-                    {
-                        if ( "YES".equals( result ) )
-                        {
-                            finish();
-                        } else
-                        {
-                            disconnect( "Not authenticated with Minecraft.net" );
-                        }
-                    } else
-                    {
-                        disconnect( bungee.getTranslation( "mojang_fail" ) );
-                        bungee.getLogger().log( Level.SEVERE, "Error authenticating " + getName() + " with minecraft.net", error );
-                    }
-                }
-            };
-
-            HttpClient.get( authURL, ch.getHandle().eventLoop(), handler );
-        } else
-        {
-            finish();
-        }
+        finish();
     }
 
     @Override
@@ -154,18 +119,13 @@ public class InitialHandler extends PacketHandler implements PendingConnection
         }
 
         // If offline mode and they are already on, don't allow connect
-        if ( !isOnlineMode() && bungee.getPlayer( handshake.getUsername() ) != null )
+        if ( bungee.getPlayer( handshake.getUsername() ) != null )
         {
             disconnect( bungee.getTranslation( "already_connected" ) );
             return;
         }
-		
-		if ( isOnlineMode() ) {
-            this.serverId = Long.toHexString( this.rand.nextLong() );
-			unsafe().sendPacket( new Packet2Handshake( this.serverId ) );
-		} else {
-			unsafe().sendPacket( new Packet2Handshake( "-" ) ); // TODO
-		}
+
+        unsafe().sendPacket( new Packet2Handshake( "-" ) );
         thisState = State.LOGIN;
     }
 
@@ -233,12 +193,6 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     public Unsafe unsafe()
     {
         return unsafe;
-    }
-
-    public void setOnlineMode(boolean onlineMode)
-    {
-        Preconditions.checkState( thisState == State.HANDSHAKE, "Can only set online mode status whilst handshaking" );
-        this.onlineMode = onlineMode;
     }
 
     @Override
