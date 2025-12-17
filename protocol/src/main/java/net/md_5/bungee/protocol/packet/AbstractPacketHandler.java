@@ -22,10 +22,6 @@ public abstract class AbstractPacketHandler
     {
     }
 
-    public void handle(PacketFEPing ping) throws Exception
-    {
-    }
-
     public void handle(PacketFFKick kick) throws Exception
     {
     }

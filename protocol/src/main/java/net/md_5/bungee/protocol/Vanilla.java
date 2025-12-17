@@ -11,7 +11,6 @@ import net.md_5.bungee.protocol.packet.Packet2Handshake;
 import net.md_5.bungee.protocol.packet.Packet3Chat;
 import net.md_5.bungee.protocol.packet.Packet9Respawn;
 import net.md_5.bungee.protocol.packet.PacketF9BungeeMessage;
-import net.md_5.bungee.protocol.packet.PacketFEPing;
 import net.md_5.bungee.protocol.packet.PacketFFKick;
 import net.md_5.bungee.protocol.skip.PacketReader;
 
@@ -42,7 +41,6 @@ public class Vanilla implements Protocol
         classes[0x03] = Packet3Chat.class;
         classes[0x09] = Packet9Respawn.class;
         classes[0xF9] = PacketF9BungeeMessage.class;
-        classes[0xFE] = PacketFEPing.class;
         classes[0xFF] = PacketFFKick.class;
         skipper = new PacketReader( this );
     }

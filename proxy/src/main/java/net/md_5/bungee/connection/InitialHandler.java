@@ -16,13 +16,11 @@ import net.md_5.bungee.Util;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.http.HttpClient;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.ChannelWrapper;
@@ -32,7 +30,6 @@ import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.Packet1Login;
 import net.md_5.bungee.protocol.packet.Packet2Handshake;
 import net.md_5.bungee.protocol.packet.PacketF9BungeeMessage;
-import net.md_5.bungee.protocol.packet.PacketFEPing;
 import net.md_5.bungee.protocol.packet.PacketFFKick;
 import net.md_5.bungee.api.AbstractReconnectHandler;
 import net.md_5.bungee.api.event.PlayerHandshakeEvent;
@@ -59,9 +56,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     };
     @Getter
     private boolean onlineMode = BungeeCord.getInstance().config.isOnlineMode();
-    private ScheduledFuture<?> pingFuture;
     private InetSocketAddress vHost;
-    private byte version = -1;
     private String serverId;
 
     private enum State
@@ -85,49 +80,6 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     @Override
     public void handle(PacketF9BungeeMessage pluginMessage) throws Exception
     {
-    }
-
-    private void respondToPing()
-    {
-        ServerInfo forced = AbstractReconnectHandler.getForcedHost( this );
-        final String motd = ( forced != null ) ? forced.getMotd() : listener.getMotd();
-
-        Callback<ServerPing> pingBack = new Callback<ServerPing>()
-        {
-            @Override
-            public void done(ServerPing result, Throwable error)
-            {
-                if ( error != null )
-                {
-                    result = new ServerPing( (byte) -1, "-1", "Error pinging remote server: " + Util.exception( error ), -1, -1 );
-                }
-                result = bungee.getPluginManager().callEvent( new ProxyPingEvent( InitialHandler.this, result ) ).getResponse();
-
-                String kickMessage = ChatColor.DARK_BLUE
-                        + "\00" + result.getProtocolVersion()
-                        + "\00" + result.getGameVersion()
-                        + "\00" + result.getMotd()
-                        + "\00" + result.getCurrentPlayers()
-                        + "\00" + result.getMaxPlayers();
-                BungeeCord.getInstance().getConnectionThrottle().unthrottle( getAddress().getAddress() );
-                disconnect( kickMessage );
-            }
-        };
-
-        pingBack.done( new ServerPing( bungee.getProtocolVersion(), bungee.getGameVersion(), motd, bungee.getOnlineCount(), listener.getMaxPlayers() ), null );
-    }
-
-    @Override
-    public void handle(PacketFEPing ping) throws Exception
-    {
-        pingFuture = ch.getHandle().eventLoop().schedule( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                respondToPing();
-            }
-        }, 200, TimeUnit.MILLISECONDS );
     }
 
     @Override
