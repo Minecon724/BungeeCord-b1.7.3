@@ -2,20 +2,15 @@ package net.md_5.bungee.connection;
 
 import com.google.common.base.Preconditions;
 import io.netty.util.concurrent.ScheduledFuture;
-import java.math.BigInteger;
+
 import java.net.InetSocketAddress;
 import java.net.URLEncoder;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.Random;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.PacketConstants;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.Util;
 import net.md_5.bungee.api.Callback;
@@ -26,16 +21,12 @@ import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.http.HttpClient;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.ChannelWrapper;
-import net.md_5.bungee.netty.PacketDecoder;
 import net.md_5.bungee.netty.PacketHandler;
-import net.md_5.bungee.netty.PipelineUtils;
-import net.md_5.bungee.protocol.MinecraftInput;
 import net.md_5.bungee.protocol.Vanilla;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.Packet1Login;
@@ -144,10 +135,10 @@ public class InitialHandler extends PacketHandler implements PendingConnection
     {
         Preconditions.checkState( thisState == State.LOGIN, "Not expecting LOGIN" );
 		
-		if ( login.getEntityId() > Vanilla.PROTOCOL_VERSION )
+		if ( login.getProtocolVersion() > Vanilla.PROTOCOL_VERSION )
         {
             disconnect( bungee.getTranslation( "outdated_server" ) );
-        } else if ( login.getEntityId() < Vanilla.PROTOCOL_VERSION )
+        } else if ( login.getProtocolVersion() < Vanilla.PROTOCOL_VERSION )
         {
             disconnect( bungee.getTranslation( "outdated_client" ) );
         }

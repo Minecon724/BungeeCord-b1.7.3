@@ -115,11 +115,11 @@ public class ServerConnector extends PacketHandler
         synchronized ( user.getSwitchMutex() )
         {
             // Once again, first connection
-            user.setClientEntityId( login.getEntityId() );
-            user.setServerEntityId( login.getEntityId() );
+            user.setClientEntityId( login.getProtocolVersion() );
+            user.setServerEntityId( login.getProtocolVersion() );
 
             // Set tab list size, this sucks balls, TODO: what shall we do about packet mutability
-            Packet1Login modLogin = new Packet1Login( login.getEntityId(), login.getLevelType(), login.getSeed(), (byte) login.getDimension() );
+            Packet1Login modLogin = new Packet1Login( login.getProtocolVersion(), login.getUsername(), login.getSeed(), (byte) login.getDimension() );
             user.unsafe().sendPacket( modLogin );
             
             if ( user.getServer() != null )

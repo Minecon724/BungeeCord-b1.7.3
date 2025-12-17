@@ -11,8 +11,8 @@ import lombok.ToString;
 public class Packet1Login extends DefinedPacket
 {
 
-    protected int entityId;
-    protected String levelType;
+    protected int protocolVersion;
+    protected String username;
     protected long seed;
     protected int dimension;
 
@@ -21,16 +21,16 @@ public class Packet1Login extends DefinedPacket
         super( 0x01 );
     }
 
-    public Packet1Login(int entityId, String levelType, long seed, byte dimension)
+    public Packet1Login(int protocolVersion, String username, long seed, byte dimension)
     {
-        this( entityId, levelType, seed, (int) dimension );
+        this(protocolVersion, username, seed, (int) dimension );
     }
 
-    public Packet1Login(int entityId, String levelType, long seed, int dimension)
+    public Packet1Login(int protocolVersion, String username, long seed, int dimension)
     {
         this();
-        this.entityId = entityId;
-        this.levelType = levelType;
+        this.protocolVersion = protocolVersion;
+        this.username = username;
         this.seed = seed;
         this.dimension = dimension;
     }
@@ -38,8 +38,8 @@ public class Packet1Login extends DefinedPacket
     @Override
     public void read(ByteBuf buf)
     {
-        entityId = buf.readInt();
-        levelType = readString( buf );
+        protocolVersion = buf.readInt();
+        username = readString( buf );
         seed = buf.readLong();
         dimension = buf.readByte();
     }
@@ -47,8 +47,8 @@ public class Packet1Login extends DefinedPacket
     @Override
     public void write(ByteBuf buf)
     {
-        buf.writeInt( entityId );
-        writeString( levelType, buf );
+        buf.writeInt(protocolVersion);
+        writeString(username, buf );
         buf.writeLong( seed );
         buf.writeByte( dimension );
     }
