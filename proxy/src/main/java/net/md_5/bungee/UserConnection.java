@@ -203,12 +203,14 @@ public final class UserConnection implements ProxiedPlayer
                         connect( def, false );
                     } else
                     {
+                        bungee.getLogger().log( Level.INFO, "Could not connect player to default server: ", future.cause() );
+
                         if ( server == null )
                         {
-                            disconnect( bungee.getTranslation( "fallback_kick" ) + future.cause().getClass().getName() );
+                            disconnect( bungee.getTranslation( "fallback_kick" ) );
                         } else
                         {
-                            sendMessage( bungee.getTranslation( "fallback_kick" ) + future.cause().getClass().getName() );
+                            sendMessage( bungee.getTranslation( "fallback_kick" ) );
                         }
                     }
                 }
