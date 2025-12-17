@@ -39,7 +39,7 @@ public class DownstreamBridge extends PacketHandler
     }
 
     @Override
-    public void disconnected(ChannelWrapper channel) throws Exception
+    public void disconnected(ChannelWrapper channel)
     {
         // We lost connection to the server
         server.getInfo().removePlayer( con );
@@ -55,7 +55,7 @@ public class DownstreamBridge extends PacketHandler
     }
 
     @Override
-    public void handle(PacketWrapper packet) throws Exception
+    public void handle(PacketWrapper packet)
     {
         if ( !server.isObsolete() )
         {
@@ -77,7 +77,7 @@ public class DownstreamBridge extends PacketHandler
     }
 
     @Override
-    public void handle(PacketFFKick kick) throws Exception
+    public void handle(PacketFFKick kick)
     {
         ServerInfo def = bungee.getServerInfo( con.getPendingConnection().getListener().getFallbackServer() );
         if ( Objects.equals( server.getInfo(), def ) )
@@ -90,7 +90,7 @@ public class DownstreamBridge extends PacketHandler
             con.connectNow( event.getCancelServer() );
         } else
         {
-            con.disconnect( bungee.getTranslation( "server_kick" ) + event.getKickReason() );
+            con.disconnect( event.getKickReason() );
         }
         server.setObsolete( true );
         throw new CancelSendSignal();

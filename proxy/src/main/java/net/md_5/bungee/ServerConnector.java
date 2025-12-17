@@ -34,7 +34,6 @@ public class ServerConnector extends PacketHandler
     private final UserConnection user;
     private final BungeeServerInfo target;
     private State thisState = State.LOGIN;
-    private boolean sentMessages;
 
     private ServerConnection server;
     private BungeeMessageHandler bungeeMessageHandler;
@@ -42,7 +41,7 @@ public class ServerConnector extends PacketHandler
     private enum State
     {
 
-        LOGIN, FINISHED;
+        LOGIN, FINISHED
     }
 
     @Override
@@ -59,7 +58,7 @@ public class ServerConnector extends PacketHandler
     }
 
     @Override
-    public void connected(ChannelWrapper channel) throws Exception
+    public void connected(ChannelWrapper channel)
     {
         this.ch = channel;
 
@@ -72,13 +71,6 @@ public class ServerConnector extends PacketHandler
         }
         user.setHandshakingServer( server );
 
-        // TODO: Figure out if this is needed or not
-        /*ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF( "Login" );
-        out.writeUTF( user.getAddress().getHostString() );
-        out.writeInt( user.getAddress().getPort() );*/
-        //channel.write( new PacketF9BungeeMessage( out.toByteArray() ) );
-
         channel.write( user.getPendingConnection().getHandshake() );
 
         boolean ipForwardingEnabled = BungeeCord.getInstance().config.isIpForwarding();
@@ -89,13 +81,13 @@ public class ServerConnector extends PacketHandler
     }
 
     @Override
-    public void disconnected(ChannelWrapper channel) throws Exception
+    public void disconnected(ChannelWrapper channel)
     {
         user.getPendingConnects().remove( target );
     }
 
     @Override
-    public void handle(Packet1Login login) throws Exception
+    public void handle(Packet1Login login)
     {
         Preconditions.checkState( thisState == State.LOGIN, "Not exepcting LOGIN" );
 
@@ -158,7 +150,7 @@ public class ServerConnector extends PacketHandler
     }
 
     @Override
-    public void handle(PacketFFKick kick) throws Exception
+    public void handle(PacketFFKick kick)
     {
         if (user.getHandshakingServer() != null && user.getHandshakingServer() != user.getServer()) {
             return;
@@ -176,7 +168,7 @@ public class ServerConnector extends PacketHandler
             return;
         }
 
-        String message = bungee.getTranslation( "connect_kick" ) + target.getName() + ": " + event.getKickReason();
+        String message = bungee.getTranslation( "connect_kick", target.getName(), event.getKickReason() );
         if ( user.getServer() == null )
         {
             user.disconnect( message );

@@ -1,9 +1,5 @@
 package net.md_5.bungee.command;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import java.util.Collections;
 import java.util.Map;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -25,15 +21,14 @@ public class CommandServer extends Command
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        if ( !( sender instanceof ProxiedPlayer ) )
+        if ( !(sender instanceof ProxiedPlayer player) )
         {
             return;
         }
-        ProxiedPlayer player = (ProxiedPlayer) sender;
         Map<String, ServerInfo> servers = ProxyServer.getInstance().getServers();
         if ( args.length == 0 )
         {
-            player.sendMessage( ProxyServer.getInstance().getTranslation( "current_server" ) + player.getServer().getInfo().getName() );
+            player.sendMessage( ProxyServer.getInstance().getTranslation( "current_server", player.getServer().getInfo().getName() ) );
 
             StringBuilder serverList = new StringBuilder();
             for ( ServerInfo server : servers.values() )
@@ -44,20 +39,20 @@ public class CommandServer extends Command
                     serverList.append( ", " );
                 }
             }
-            if ( serverList.length() != 0 )
+            if (!serverList.isEmpty())
             {
                 serverList.setLength( serverList.length() - 2 );
             }
-            player.sendMessage( ProxyServer.getInstance().getTranslation( "server_list" ) + serverList.toString() );
+            player.sendMessage( ProxyServer.getInstance().getTranslation( "server_list", serverList.toString() ) );
         } else
         {
             ServerInfo server = servers.get( args[0] );
             if ( server == null )
             {
-                player.sendMessage( ProxyServer.getInstance().getTranslation( "no_server" ) );
+                player.sendMessage( ProxyServer.getInstance().getTranslation( "no_server", args[0] ) );
             } else if ( !server.canAccess( player ) )
             {
-                player.sendMessage( ProxyServer.getInstance().getTranslation( "no_server_permission" ) );
+                player.sendMessage( ProxyServer.getInstance().getTranslation( "no_server_permission", args[0] ) );
             } else
             {
                 player.connect( server );

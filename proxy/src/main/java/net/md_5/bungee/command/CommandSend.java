@@ -26,7 +26,7 @@ public class CommandSend extends Command
         ServerInfo target = ProxyServer.getInstance().getServerInfo( args[1] );
         if ( target == null )
         {
-            sender.sendMessage( ProxyServer.getInstance().getTranslation( "no_server" ) );
+            sender.sendMessage( ProxyServer.getInstance().getTranslation( "no_server", args[1] ) );
             return;
         }
 
@@ -38,12 +38,11 @@ public class CommandSend extends Command
             }
         } else if ( args[0].equalsIgnoreCase( "current" ) )
         {
-            if ( !( sender instanceof ProxiedPlayer ) )
+            if ( !(sender instanceof ProxiedPlayer player) )
             {
                 sender.sendMessage( ChatColor.RED + "Only in game players can use this command" );
                 return;
             }
-            ProxiedPlayer player = (ProxiedPlayer) sender;
             for ( ProxiedPlayer p : player.getServer().getInfo().getPlayers() )
             {
                 summon( p, target, sender );

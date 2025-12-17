@@ -3,7 +3,6 @@ package net.md_5.bungee.command;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class CommandAlert extends Command
@@ -25,11 +24,10 @@ public class CommandAlert extends Command
             StringBuilder builder = new StringBuilder();
             if ( args[0].startsWith( "&h" ) )
             {
-                // Remove &h
-                args[0] = args[0].substring( 2, args[0].length() );
+                args[0] = args[0].substring( 2 );
             } else
             {
-                builder.append( ProxyServer.getInstance().getTranslation( "alert" ) );
+                builder.append( ProxyServer.getInstance().getTranslation( "alert_prefix" ) );
             }
 
             for ( String s : args )

@@ -3,7 +3,6 @@ package net.md_5.bungee;
 import com.google.common.base.Preconditions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -19,7 +18,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -177,41 +175,34 @@ public final class UserConnection implements ProxiedPlayer
 
         pendingConnects.add( target );
 
-        ChannelInitializer initializer = new ChannelInitializer()
-        {
+        ChannelInitializer<Channel> initializer = new ChannelInitializer<>() {
             @Override
-            protected void initChannel(Channel ch) throws Exception
-            {
-                PipelineUtils.BASE.initChannel( ch );
-                ch.pipeline().get( HandlerBoss.class ).setHandler( new ServerConnector( bungee, UserConnection.this, target ) );
+            protected void initChannel(Channel ch) throws Exception {
+                PipelineUtils.BASE.initChannel(ch);
+                ch.pipeline().get(HandlerBoss.class).setHandler(new ServerConnector(bungee, UserConnection.this, target));
             }
         };
-        ChannelFutureListener listener = new ChannelFutureListener()
-        {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception
+        ChannelFutureListener listener = future -> {
+            if ( !future.isSuccess() )
             {
-                if ( !future.isSuccess() )
-                {
-                    future.channel().close();
-                    pendingConnects.remove( target );
+                future.channel().close();
+                pendingConnects.remove( target );
 
-                    ServerInfo def = ProxyServer.getInstance().getServers().get( getPendingConnection().getListener().getFallbackServer() );
-                    if ( retry && target != def && ( getServer() == null || def != getServer().getInfo() ) )
+                ServerInfo def = ProxyServer.getInstance().getServers().get( getPendingConnection().getListener().getFallbackServer() );
+                if ( retry && target != def && ( getServer() == null || def != getServer().getInfo() ) )
+                {
+                    sendMessage( bungee.getTranslation( "fallback_lobby" ) );
+                    connect( def, false );
+                } else
+                {
+                    bungee.getLogger().log( Level.INFO, "Could not connect %s to %s: ".formatted(displayName, target.getName()), future.cause() );
+
+                    if ( server == null )
                     {
-                        sendMessage( bungee.getTranslation( "fallback_lobby" ) );
-                        connect( def, false );
+                        disconnect( bungee.getTranslation( "fallback_kick" ) );
                     } else
                     {
-                        bungee.getLogger().log( Level.INFO, "Could not connect player to default server: ", future.cause() );
-
-                        if ( server == null )
-                        {
-                            disconnect( bungee.getTranslation( "fallback_kick" ) );
-                        } else
-                        {
-                            sendMessage( bungee.getTranslation( "fallback_kick" ) );
-                        }
+                        sendMessage( bungee.getTranslation( "fallback_kick" ) );
                     }
                 }
             }

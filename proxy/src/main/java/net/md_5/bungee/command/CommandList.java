@@ -1,7 +1,6 @@
 package net.md_5.bungee.command;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import net.md_5.bungee.Util;
 import net.md_5.bungee.api.ChatColor;
@@ -37,9 +36,9 @@ public class CommandList extends Command
             {
                 players.add( player.getDisplayName() );
             }
-            Collections.sort( players, String.CASE_INSENSITIVE_ORDER );
+            players.sort(String.CASE_INSENSITIVE_ORDER);
 
-            sender.sendMessage( ProxyServer.getInstance().getTranslation( "command_list", server.getName(), server.getPlayers().size(), Util.format( players, ChatColor.WHITE + ", " ) ) );
+            sender.sendMessage( ProxyServer.getInstance().getTranslation( "command_list", server.getName(), server.getPlayers().size(), Util.format( players, ChatColor.GRAY + ", " + ChatColor.WHITE ) ) );
         }
 
         sender.sendMessage( ProxyServer.getInstance().getTranslation( "total_players", ProxyServer.getInstance().getOnlineCount() ) );
