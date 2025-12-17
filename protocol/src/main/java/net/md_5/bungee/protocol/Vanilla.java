@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import lombok.Getter;
 import static net.md_5.bungee.protocol.OpCode.*;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
-import net.md_5.bungee.protocol.packet.Packet0KeepAlive;
 import net.md_5.bungee.protocol.packet.Packet1Login;
 import net.md_5.bungee.protocol.packet.Packet2Handshake;
 import net.md_5.bungee.protocol.packet.Packet3Chat;
@@ -38,7 +37,6 @@ public class Vanilla implements Protocol
 
     public Vanilla()
     {
-        classes[0x00] = Packet0KeepAlive.class;
         classes[0x01] = Packet1Login.class;
         classes[0x02] = Packet2Handshake.class;
         classes[0x03] = Packet3Chat.class;

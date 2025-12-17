@@ -9,7 +9,6 @@ import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.PacketHandler;
 import net.md_5.bungee.netty.PacketWrapper;
-import net.md_5.bungee.protocol.packet.Packet0KeepAlive;
 import net.md_5.bungee.protocol.packet.PacketF9BungeeMessage;
 import net.md_5.bungee.protocol.packet.PacketFFKick;
 
@@ -63,13 +62,6 @@ public class DownstreamBridge extends PacketHandler
             EntityMap.rewrite( packet.buf, con.getServerEntityId(), con.getClientEntityId() );
             con.sendPacket( packet );
         }
-    }
-
-    @Override
-    public void handle(Packet0KeepAlive alive) throws Exception
-    {
-        //con.setSentPingId( alive.getRandomId() );
-        //con.setSentPingTime( System.currentTimeMillis() );
     }
 
     @Override

@@ -2,11 +2,6 @@ package net.md_5.bungee.protocol.packet;
 
 public abstract class AbstractPacketHandler
 {
-
-    public void handle(Packet0KeepAlive alive) throws Exception
-    {
-    }
-
     public void handle(Packet1Login login) throws Exception
     {
     }

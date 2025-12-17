@@ -7,15 +7,11 @@ import net.md_5.bungee.Util;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.PacketHandler;
 import net.md_5.bungee.netty.PacketWrapper;
-import net.md_5.bungee.protocol.packet.Packet0KeepAlive;
 import net.md_5.bungee.protocol.packet.Packet3Chat;
 import net.md_5.bungee.protocol.packet.PacketF9BungeeMessage;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UpstreamBridge extends PacketHandler
 {
@@ -62,17 +58,6 @@ public class UpstreamBridge extends PacketHandler
         {
             con.getServer().getCh().write( packet );
         }
-    }
-
-    @Override
-    public void handle(Packet0KeepAlive alive) throws Exception
-    {
-        /*if ( alive.getRandomId() == con.getSentPingId() )
-        {
-            int newPing = (int) ( System.currentTimeMillis() - con.getSentPingTime() );
-            //con.getTabList().onPingChange( newPing );
-            con.setPing( newPing );
-        }*/
     }
 
     @Override
