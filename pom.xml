@@ -109,16 +109,33 @@
                     <target>21</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <keyname>${gpg.keyname}</keyname>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <distributionManagement>
         <snapshotRepository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/Minecon724/BungeeCord-b1.7.3</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>m724</id>
+            <url>https://git.m724.eu/api/packages/m724/maven</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
