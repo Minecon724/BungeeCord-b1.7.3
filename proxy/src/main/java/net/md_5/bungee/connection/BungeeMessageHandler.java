@@ -150,6 +150,10 @@ public class BungeeMessageHandler {
             out.writeUTF( "GetServer" );
             out.writeUTF( serverConnection.getInfo().getName() );
         }
+        if ( subChannel.equals("DisplayName") ) {
+            String displayName = in.readUTF();
+            userConnection.setDisplayName(displayName);
+        }
 
         // Check we haven't set out to null, and we have written data, if so reply back back along the BungeeCord channel
         if ( out != null )

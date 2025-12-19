@@ -67,7 +67,7 @@ public class ServerConnector extends PacketHandler
 
         if (user.getHandshakingServer() != null) {
             user.getHandshakingServer().setObsolete(true);
-            user.getHandshakingServer().disconnect("Quitting");
+            user.getHandshakingServer().disconnect("Connected to another server");
         }
         user.setHandshakingServer( server );
 
@@ -77,7 +77,8 @@ public class ServerConnector extends PacketHandler
         long address = ipForwardingEnabled ? Util.addressToLoginPacketValue(user.getAddress().getAddress()) : 0;
         byte header = (byte) (ipForwardingEnabled ? MAGIC_HEADER : 0);
 
-        channel.write(new Packet1Login(Vanilla.PROTOCOL_VERSION, user.getPendingConnection().getHandshake().getUsername(), address, header));
+        // This is sent to the server
+        channel.write(new Packet1Login(Vanilla.PROTOCOL_VERSION, user.getDisplayName(), address, header));
     }
 
     @Override
@@ -110,8 +111,8 @@ public class ServerConnector extends PacketHandler
             user.setClientEntityId( login.getProtocolVersion() );
             user.setServerEntityId( login.getProtocolVersion() );
 
-            // Set tab list size, this sucks balls, TODO: what shall we do about packet mutability
-            Packet1Login modLogin = new Packet1Login( login.getProtocolVersion(), login.getUsername(), login.getSeed(), (byte) login.getDimension() );
+            // This is sent to the client
+            Packet1Login modLogin = new Packet1Login( login.getProtocolVersion(), "", 0, (byte) 0 );
             user.unsafe().sendPacket( modLogin );
             
             if ( user.getServer() != null )
@@ -120,13 +121,13 @@ public class ServerConnector extends PacketHandler
                 
                 // Remove from old servers
                 user.getServer().setObsolete( true );
-                user.getServer().disconnect( "Quitting" );
+                user.getServer().disconnect( "Connected to another server" );
             }
 
             // TODO: Fix this?
             if ( !user.isActive() )
             {
-                server.disconnect( "Quitting" );
+                server.disconnect( "Connected to another server" );
                 // Silly server admins see stack trace and die
                 bungee.getLogger().warning( "No client connected for pending server!" );
                 return;
