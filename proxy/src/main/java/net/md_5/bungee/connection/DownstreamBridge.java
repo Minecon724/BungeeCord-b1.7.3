@@ -88,7 +88,7 @@ public class DownstreamBridge extends PacketHandler
         if ( event.isCancelled() && event.getCancelServer() != null )
         {
             con.connectNow( event.getCancelServer() );
-        } else
+        } else if ( con.getServer() == server )
         {
             con.disconnect( event.getKickReason() );
         }
