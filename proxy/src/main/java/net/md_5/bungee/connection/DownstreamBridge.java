@@ -26,7 +26,13 @@ public class DownstreamBridge extends PacketHandler
     @Override
     public void exception(Throwable t) throws Exception
     {
-        ServerInfo def = bungee.getServerInfo( con.getPendingConnection().getListener().getFallbackServer() );
+        String fallbackServerName = con.getPendingConnection().getListener().getFallbackServer();
+
+        ServerInfo def = server.getInfo();
+        if (!fallbackServerName.equals("null")) {
+            def = bungee.getServerInfo( fallbackServerName );
+        }
+
         if ( server.getInfo() != def )
         {
             server.setObsolete( true );
