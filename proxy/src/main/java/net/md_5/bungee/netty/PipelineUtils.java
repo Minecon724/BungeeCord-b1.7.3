@@ -1,7 +1,6 @@
 package net.md_5.bungee.netty;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
@@ -60,13 +59,7 @@ public class PipelineUtils
         @Override
         public void initChannel(Channel ch) throws Exception
         {
-            try
-            {
-                ch.config().setOption( ChannelOption.IP_TOS, 0x18 );
-            } catch ( ChannelException ex )
-            {
-                // IP_TOS is not supported (Windows XP / Windows Server 2003)
-            }
+            ch.config().setOption( ChannelOption.TCP_NODELAY, true );
 
             ch.pipeline().addLast( TIMEOUT_HANDLER, new ReadTimeoutHandler( BungeeCord.getInstance().config.getTimeout(), TimeUnit.MILLISECONDS ) );
             ch.pipeline().addLast( PACKET_DECODE_HANDLER, new PacketDecoder( Vanilla.getInstance() ) );
