@@ -189,7 +189,7 @@ public final class UserConnection implements ProxiedPlayer
                 pendingConnects.remove( target );
 
                 ServerInfo def = ProxyServer.getInstance().getServers().get( getPendingConnection().getListener().getFallbackServer() );
-                if ( retry && target != def && ( getServer() == null || def != getServer().getInfo() ) )
+                if ( def != null && retry && target != def && ( getServer() == null || def != getServer().getInfo() ) )
                 {
                     sendMessage( bungee.getTranslation( "fallback_lobby" ) );
                     connect( def, false );
