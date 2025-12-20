@@ -112,7 +112,7 @@ public class ServerConnector extends PacketHandler
             user.setServerEntityId( login.getProtocolVersion() );
 
             // This is sent to the client
-            Packet1Login modLogin = new Packet1Login( login.getProtocolVersion(), "", 0, (byte) 0 );
+            Packet1Login modLogin = new Packet1Login( login.getProtocolVersion(), login.getUsername(), login.getSeed(), login.getDimension() );
             user.unsafe().sendPacket( modLogin );
             
             if ( user.getServer() != null )
