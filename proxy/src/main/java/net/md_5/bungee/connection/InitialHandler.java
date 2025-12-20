@@ -1,11 +1,8 @@
 package net.md_5.bungee.connection;
 
 import com.google.common.base.Preconditions;
-import io.netty.util.concurrent.ScheduledFuture;
 
 import java.net.InetSocketAddress;
-import java.net.URLEncoder;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.Random;
 import lombok.Getter;
@@ -13,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.Util;
-import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ListenerInfo;
@@ -21,7 +17,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.http.HttpClient;
 import net.md_5.bungee.netty.HandlerBoss;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.PacketHandler;
